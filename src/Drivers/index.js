@@ -5,13 +5,14 @@ import Header from "../Header";
 import { ToastContainer, toast } from 'react-toastify';
 import {favoritesContext} from "../FavoritesContext";
 import 'react-toastify/dist/ReactToastify.css';
+import ReactLoading from 'react-loading';
 
 
 
 function Drivers() {
     const [data,setData]= useState([]);
     const [page,setPage]= useState('https://swapi.dev/api/people?page');
-
+    const [loading,setLoading] = useState(false);
     let {favorites,setFavorites} = useContext(favoritesContext)
 
     function addFavorites(item) {
@@ -24,12 +25,17 @@ function Drivers() {
 
     const toster = () => toast('Added to Favorites');
     useEffect((event)=>{
+        setLoading(true);
         axios.get(page)
             .then((res)=>{
                 setData(res.data.results)
+                setLoading(false);
+
             })
 
     },[page])
+
+
 
     return <>
         <Header/>
@@ -56,9 +62,13 @@ function Drivers() {
                 <th>Add to Favorite</th>
             </tr>
             </thead>
+
             <tbody>
             {
-              data&&data.map((item,i)=>{
+                loading?
+                        <ReactLoading  color={'red'} height={'100%'} width={'100%'} />
+                :
+            data&&data.map((item,i)=>{
                     return(
                             <tr key={i}>
                                 <td>{item.name}</td>
